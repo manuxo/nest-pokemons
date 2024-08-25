@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Pokemon } from 'src/pokemon/entities/pokemon.entity';
 import { AxiosAdapter } from 'src/common/adapters/axios.adapter';
+import { LocationService } from 'src/location/location.service';
 
 @Injectable()
 export class SeedService {
@@ -13,7 +14,8 @@ export class SeedService {
   constructor(
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>,
-    private readonly http: AxiosAdapter
+    private readonly http: AxiosAdapter,
+    private readonly locationService: LocationService,
   ) { }
 
   async executeSeed() {
@@ -27,6 +29,7 @@ export class SeedService {
     });
     await this.pokemonModel.insertMany(pokemonToInsert);
     // const pokemons = await Promise.all(pokemonPromises);
+    await this.locationService.executeSeed();
     return 'Seed executed';
   }
 }
